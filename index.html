@@ -1,88 +1,171 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoTwin AI</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            padding: 35px;
-            background: #06131d;
-            color: #e8f3f6;
-            font-family: Arial, sans-serif;
-        }
-        h1 { color: #40e28b; }
-        .tagline { color: #57d8ec; }
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 16px;
-            margin-top: 28px;
-        }
-        .card {
-            padding: 24px;
-            border: 1px solid #1d4b50;
-            border-radius: 14px;
-            background: #0a1c29;
-        }
-        .card h2 { color: #40e28b; }
-        .label { color: #9bb6c2; }
-        .notice {
-            margin-top: 25px;
-            color: #ffcf70;
-            font-size: 13px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EcoTwin AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1512;color:#e7f5ec;font-family:Arial}
+header{padding:20px;background:#14251d;border-bottom:1px solid #31513e}
+h1{margin:0;color:#52e39b}
+nav{padding:12px;background:#102019;display:flex;gap:10px;flex-wrap:wrap}
+button{background:#246b49;color:white;border:0;padding:11px 15px;border-radius:7px;cursor:pointer}
+main{padding:20px;max-width:1100px;margin:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.card{background:#172820;padding:18px;border-radius:12px;border:1px solid #294a37}
+.number{font-size:28px;color:#52e39b;font-weight:bold}
+#campus{width:100%;height:auto;background:#10251b;border-radius:12px}
+section{margin:20px 0}
+input{max-width:100%;margin:12px 0}
+p{line-height:1.6;color:#c6d9cc}
+</style>
 </head>
 <body>
-    <h1>EcoTwin AI</h1>
-    <p class="tagline">Predict · Act · Prove</p>
-    <p>Campus Sustainability Command Center</p>
+<header>
+<h1>🌱 EcoTwin AI</h1>
+<p>Smart Waste Management Digital Twin for Sustainable Campuses</p>
+</header>
 
-    <div class="cards">
-        <div class="card">
-            <div>💧 Water Usage</div>
-            <h2 id="water">Loading...</h2>
-            <div class="label">Litres per day</div>
-        </div>
-        <div class="card">
-            <div>⚡ Energy Consumption</div>
-            <h2 id="energy">Loading...</h2>
-            <div class="label">kWh per day</div>
-        </div>
-        <div class="card">
-            <div>🚨 Active Issues</div>
-            <h2 id="issues">Loading...</h2>
-            <div class="label">Issues to investigate</div>
-        </div>
-        <div class="card">
-            <div>🌱 Campus Health</div>
-            <h2 id="health">Loading...</h2>
-            <div class="label">Score out of 100</div>
-        </div>
-    </div>
+<nav>
+<button onclick="show('Dashboard')">Dashboard</button>
+<button onclick="show('Digital Twin')">Digital Twin</button>
+<button onclick="show('Waste Detection')">Waste Detection</button>
+<button onclick="show('AI Insights')">AI Insights</button>
+<button onclick="show('Collection Plan')">Collection Plan</button>
+</nav>
 
-    <p class="notice">
-        Demo mode: displayed resource readings are simulated.
-    </p>
+<main>
+<h2 id="title">Campus Dashboard</h2>
+<div id="content"></div>
+</main>
 
-    <script>
-        fetch("/api/summary")
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("water").textContent =
-                    data.water.toLocaleString();
-                document.getElementById("energy").textContent =
-                    data.energy.toLocaleString();
-                document.getElementById("issues").textContent =
-                    data.active_issues;
-                document.getElementById("health").textContent =
-                    data.health + "/100";
-            })
-            .catch(error => console.error("Dashboard error:", error));
-    </script>
+<script>
+let waste=24;
+
+function dashboard(){
+return `
+<div class="cards">
+<div class="card">Waste Collected<div class="number" id="waste">${waste} kg</div></div>
+<div class="card">Recycling Rate<div class="number">76%</div></div>
+<div class="card">Smart Bins<div class="number">12</div></div>
+<div class="card">Campus Status<div class="number">Good</div></div>
+</div>
+<section class="card">
+<h3>Recent Activity</h3>
+<p id="activity">Campus waste monitoring is active.</p>
+<button onclick="deposit()">Simulate Waste Collection</button>
+</section>`;
+}
+
+function twin(){
+return `
+<div class="card">
+<h3>Campus Digital Twin</h3>
+<p>Simulated campus buildings and waste-bin locations.</p>
+<canvas id="campus" width="800" height="350"></canvas>
+<p>🟢 Normal bin &nbsp; 🟠 Bin needs collection</p>
+</div>`;
+}
+
+function detection(){
+return `
+<div class="card">
+<h3>Waste Classification Demo</h3>
+<p>Choose a waste category to simulate computer vision classification.</p>
+<input type="file" id="photo" accept="image/*">
+<br>
+<select id="category">
+<option>Plastic</option><option>Paper</option>
+<option>Glass</option><option>Organic</option>
+<option>Metal</option>
+</select>
+<button onclick="detect()">Classify Waste</button>
+<div id="result"></div>
+</div>`;
+}
+
+function insights(){
+return `
+<div class="card">
+<h3>AI Sustainability Recommendations</h3>
+<p>♻️ Improve segregation by placing separate bins near the cafeteria.</p>
+<p>🚛 Prioritize collection from bins that are nearly full.</p>
+<p>🌿 Increase recycling awareness through campus campaigns.</p>
+<p>💧 Monitor water usage and repair leaks promptly.</p>
+<p><b>Note:</b> These are rule-based demo recommendations, not live generative AI.</p>
+</div>`;
+}
+
+function planner(){
+return `
+<div class="card">
+<h3>Optimized Collection Plan</h3>
+<p>1. Collect waste from the cafeteria.</p>
+<p>2. Check bins near the library.</p>
+<p>3. Empty hostel waste bins.</p>
+<p>4. Transport segregated waste to the recycling area.</p>
+<button onclick="alert('Demo collection route optimized!')">Optimize Route</button>
+</div>`;
+}
+
+function show(page){
+document.getElementById('title').textContent=page;
+let html={
+'Dashboard':dashboard,
+'Digital Twin':twin,
+'Waste Detection':detection,
+'AI Insights':insights,
+'Collection Plan':planner
+};
+document.getElementById('content').innerHTML=html[page]();
+if(page==='Digital Twin')drawCampus();
+}
+
+function drawCampus(){
+let c=document.getElementById('campus');
+if(!c)return;
+let x=c.getContext('2d');
+x.fillStyle='#10251b';x.fillRect(0,0,800,350);
+function building(a,b,w,h,name,color){
+x.fillStyle=color;x.fillRect(a,b,w,h);
+x.fillStyle='white';x.font='15px Arial';
+x.fillText(name,a,b-8);
+}
+building(50,80,150,90,'LIBRARY','#28724b');
+building(300,60,170,110,'SCIENCE BLOCK','#315f7d');
+building(570,90,150,85,'HOSTEL','#80613a');
+building(100,240,140,60,'CAFETERIA','#6a4a83');
+building(390,230,170,70,'AUDITORIUM','#456a91');
+[100,300,500,680].forEach((a,i)=>{
+x.beginPath();x.arc(a,190,10,0,Math.PI*2);
+x.fillStyle=i%2?'#ffad60':'#52e39b';x.fill();
+});
+}
+
+function detect(){
+let category=document.getElementById('category').value;
+let bin=category==='Organic'?'Green bin':
+category==='Paper'?'Blue recycling bin':
+category==='Glass'?'Glass recycling bin':'Recycling bin';
+document.getElementById('result').innerHTML=
+`<p>Detected category: <b>${category}</b></p>
+<p>Demo confidence: <b>95%</b></p>
+<p>Suggested disposal: <b>${bin}</b></p>
+<button onclick="deposit()">Confirm Deposit</button>
+<p>Demo only: this selection simulates classification; it does not analyse the image.</p>`;
+}
+
+function deposit(){
+waste+=1;
+let el=document.getElementById('waste');
+if(el)el.textContent=waste+' kg';
+let activity=document.getElementById('activity');
+if(activity)activity.textContent='New waste deposit recorded. Dashboard updated.';
+alert('Demo deposit recorded!');
+}
+
+show('Dashboard');
+</script>
 </body>
 </html>
